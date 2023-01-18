@@ -49,18 +49,36 @@ Obesity class III – BMI greater than or equal to 40 kg/m^2
 
 ```{r}
 bc_data = bc_data %>% 
-  mutate(BMI_cat = case_when(BMI < 16.5 ~ "Severely underweight", 
+  mutate(BMI_cat = as.factor(case_when(BMI < 16.5 ~ "Severely underweight", 
                              BMI < 18.5 & BMI >= 16.5 ~ "Underweight", 
                              BMI < 25 & BMI >= 18.5 ~ "Normal weight", 
                              BMI < 30 & BMI >= 25 ~ "Overweight",
-                             BMI < 35 & BMI >= 35 ~ "Obesity class I",
+                             BMI < 35 & BMI >= 30 ~ "Obesity class I",
                              BMI < 40 & BMI >= 35 ~ "Obesity class II",
                              BMI >= 40 ~ "Obesity class III"
-                             ))
+                             ))) %>% 
+  mutate(BMI_cat = fct_reorder(BMI_cat, BMI), 
+         Classification = as.factor(Classification))
+
+levels(bc_data$Classification)
 ```
 
 ## 3. Plotting breast cancer rates across BMI categories
 Create a bar chart showing the proportion of breast cancer cases and controls within each BMI category. (That is, the graph should clearly show, what % of each BMI category are cases and what % are controls)
+
+```{r}
+BC_BMI = bc_data %>% 
+  group_by(BMI_cat, Classification) %>% 
+  summarise(N = n()) %>% 
+  mutate(Proportion = N/sum(N)) 
+
+BC_BMI %>% ggplot(aes(x = BMI_cat, y = Proportion, fill = Classification)) + 
+  geom_bar(position = "stack", stat = "identity") +
+  labs(
+    x = "BMI Category",
+    y = "Proportion") + 
+  scale_fill_brewer()
+```
 
 
 ## 4. Logistic regression model of breast cancer
@@ -69,7 +87,7 @@ Fill in the beta estimate and 95% confidence interval associated with a 1-unit c
  
 ## 5. Linear regression model of breast cancer
 
-5.Construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
+5. Construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
 Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in age.
  
  
