@@ -12,7 +12,7 @@
 
 <meta name="date" content="2023-01-18" />
 
-<title>P8451 HW 1</title>
+<title>P8451 Assignment 1</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -349,14 +349,186 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">P8451 HW 1</h1>
+<h1 class="title toc-ignore">P8451 Assignment 1</h1>
 <h4 class="date">2023-01-18</h4>
 
 </div>
 
 
-<div id="part-1" class="section level2">
-<h2>Part 1:</h2>
+<p>Assignment Instructions Using the study dataset, you will complete
+the following tasks. Create and then submit, using R markdown, a
+document that displays the programming code and output associated with
+each item. Follow the formatting instructions reviewed in class. You
+must provide a specific answer for all items; you are encouraged to
+output formatted and specific answers (e.g. only outputting a single
+estimate or generating a formatted table). Use complete sentences for
+any short-answer questions.</p>
+<div id="descriptive-statistics" class="section level2">
+<h2>1. Descriptive statistics</h2>
+<div id="reading-in-the-data" class="section level3">
+<h3>Reading in the data</h3>
+<p>First, let’s read in the dataset.</p>
+<pre class="r"><code>bc_data = read_csv(&quot;./bcdata_Assignment1.csv&quot;)</code></pre>
+<p>Next, we will construct a table providing summaries of the mean,
+median, minimum value, and maximum value of each variable in the
+dataset.</p>
+</div>
+<div id="summary-table" class="section level3">
+<h3>Summary table</h3>
+<pre class="r"><code>summary(bc_data) %&gt;% knitr::kable()</code></pre>
+<table>
+<colgroup>
+<col width="1%" />
+<col width="8%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Age</th>
+<th align="left">BMI</th>
+<th align="left">Glucose</th>
+<th align="left">Insulin</th>
+<th align="left">HOMA</th>
+<th align="left">Leptin</th>
+<th align="left">Adiponectin</th>
+<th align="left">Resistin</th>
+<th align="left">MCP.1</th>
+<th align="left">Classification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. :24.0</td>
+<td align="left">Min. :18.37</td>
+<td align="left">Min. : 60.00</td>
+<td align="left">Min. : 2.432</td>
+<td align="left">Min. : 0.4674</td>
+<td align="left">Min. : 4.311</td>
+<td align="left">Min. : 1.656</td>
+<td align="left">Min. : 3.210</td>
+<td align="left">Min. : 45.84</td>
+<td align="left">Min. :1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.:45.0</td>
+<td align="left">1st Qu.:22.97</td>
+<td align="left">1st Qu.: 85.75</td>
+<td align="left">1st Qu.: 4.359</td>
+<td align="left">1st Qu.: 0.9180</td>
+<td align="left">1st Qu.:12.314</td>
+<td align="left">1st Qu.: 5.474</td>
+<td align="left">1st Qu.: 6.882</td>
+<td align="left">1st Qu.: 269.98</td>
+<td align="left">1st Qu.:1.000</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median :56.0</td>
+<td align="left">Median :27.66</td>
+<td align="left">Median : 92.00</td>
+<td align="left">Median : 5.925</td>
+<td align="left">Median : 1.3809</td>
+<td align="left">Median :20.271</td>
+<td align="left">Median : 8.353</td>
+<td align="left">Median :10.828</td>
+<td align="left">Median : 471.32</td>
+<td align="left">Median :2.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean :57.3</td>
+<td align="left">Mean :27.58</td>
+<td align="left">Mean : 97.79</td>
+<td align="left">Mean :10.012</td>
+<td align="left">Mean : 2.6950</td>
+<td align="left">Mean :26.615</td>
+<td align="left">Mean :10.181</td>
+<td align="left">Mean :14.726</td>
+<td align="left">Mean : 534.65</td>
+<td align="left">Mean :1.552</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.:71.0</td>
+<td align="left">3rd Qu.:31.24</td>
+<td align="left">3rd Qu.:102.00</td>
+<td align="left">3rd Qu.:11.189</td>
+<td align="left">3rd Qu.: 2.8578</td>
+<td align="left">3rd Qu.:37.378</td>
+<td align="left">3rd Qu.:11.816</td>
+<td align="left">3rd Qu.:17.755</td>
+<td align="left">3rd Qu.: 700.09</td>
+<td align="left">3rd Qu.:2.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :89.0</td>
+<td align="left">Max. :38.58</td>
+<td align="left">Max. :201.00</td>
+<td align="left">Max. :58.460</td>
+<td align="left">Max. :25.0503</td>
+<td align="left">Max. :90.280</td>
+<td align="left">Max. :38.040</td>
+<td align="left">Max. :82.100</td>
+<td align="left">Max. :1698.44</td>
+<td align="left">Max. :2.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="recoding-bmi" class="section level2">
+<h2>2. Recoding BMI</h2>
+<p>We will recode BMI into the WHO-defined categories below:</p>
+<p>Severely underweight - BMI less than 16.5kg/m^2 Underweight - BMI
+under 18.5 kg/m^2 Normal weight - BMI greater than or equal to 18.5 to
+24.9 kg/m^2 Overweight – BMI greater than or equal to 25 to 29.9 kg/m^2
+Obesity class I – BMI 30 to 34.9 kg/m^2 Obesity class II – BMI 35 to
+39.9 kg/m^2 Obesity class III – BMI greater than or equal to 40
+kg/m^2</p>
+<pre class="r"><code>bc_data = bc_data %&gt;% 
+  mutate(BMI_cat = case_when(BMI &lt; 16.5 ~ &quot;Severely underweight&quot;, 
+                             BMI &lt; 18.5 &amp; BMI &gt;= 16.5 ~ &quot;Underweight&quot;, 
+                             BMI &lt; 25 &amp; BMI &gt;= 18.5 ~ &quot;Normal weight&quot;, 
+                             BMI &lt; 30 &amp; BMI &gt;= 25 ~ &quot;Overweight&quot;,
+                             BMI &lt; 35 &amp; BMI &gt;= 35 ~ &quot;Obesity class I&quot;,
+                             BMI &lt; 40 &amp; BMI &gt;= 35 ~ &quot;Obesity class II&quot;,
+                             BMI &gt;= 40 ~ &quot;Obesity class III&quot;
+                             ))</code></pre>
+</div>
+<div id="plotting-breast-cancer-rates-across-bmi-categories" class="section level2">
+<h2>3. Plotting breast cancer rates across BMI categories</h2>
+<p>Create a bar chart showing the proportion of breast cancer cases and
+controls within each BMI category. (That is, the graph should clearly
+show, what % of each BMI category are cases and what % are controls)</p>
+</div>
+<div id="logistic-regression-model-of-breast-cancer" class="section level2">
+<h2>4. Logistic regression model of breast cancer</h2>
+<ol start="4" style="list-style-type: decimal">
+<li>Construct a logistic regression model using breast cancer
+classification as the outcome and glucose, HOMA-IR, leptin, BMI
+(continuous) and age as the independent variables. Fill in the beta
+estimate and 95% confidence interval associated with a 1-unit change in
+HOMA-IR</li>
+</ol>
+</div>
+<div id="linear-regression-model-of-breast-cancer" class="section level2">
+<h2>5. Linear regression model of breast cancer</h2>
+<p>5.Construct a linear regression model using insulin as the outcome
+and BMI (continuous), age, and glucose as the independent variables.
+Fill in the beta estimate and 95% confidence interval associated with a
+1-unit change in age.</p>
 </div>
 
 

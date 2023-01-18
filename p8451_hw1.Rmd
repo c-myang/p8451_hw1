@@ -1,14 +1,12 @@
 ---
-title: "P8451 HW 1"
+title: "P8451 Assignment 1"
 output: html_document
 date: "2023-01-18"
 ---
 
 ```{r setup, include = FALSE}
 library(tidyverse)
-library(p8105.datasets)
-library(modelr)
-library(patchwork)
+library(readr)
 
 knitr::opts_chunk$set(
   warning = FALSE, 
@@ -18,4 +16,60 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
-## Part 1: 
+Assignment Instructions
+Using the study dataset, you will complete the following tasks. Create and then submit, using R markdown, a document that displays the programming code and output associated with each item. Follow the formatting instructions reviewed in class. You must provide a specific answer for all items; you are encouraged to output formatted and specific answers (e.g. only outputting a single estimate or generating a formatted table). Use complete sentences for any short-answer questions.
+
+## 1. Descriptive statistics
+
+### Reading in the data
+First, let's read in the dataset.
+
+```{r}
+bc_data = read_csv("./bcdata_Assignment1.csv")
+```
+
+Next, we will construct a table providing summaries of the mean, median, minimum value, and maximum value of each variable in the dataset.
+
+### Summary table
+```{r}
+summary(bc_data) %>% knitr::kable()
+```
+
+
+## 2. Recoding BMI
+We will recode BMI into the WHO-defined categories below:
+
+Severely underweight - BMI less than 16.5kg/m^2
+Underweight - BMI under 18.5 kg/m^2
+Normal weight - BMI greater than or equal to 18.5 to 24.9 kg/m^2
+Overweight – BMI greater than or equal to 25 to 29.9 kg/m^2
+Obesity class I – BMI 30 to 34.9 kg/m^2
+Obesity class II – BMI 35 to 39.9 kg/m^2
+Obesity class III – BMI greater than or equal to 40 kg/m^2
+
+```{r}
+bc_data = bc_data %>% 
+  mutate(BMI_cat = case_when(BMI < 16.5 ~ "Severely underweight", 
+                             BMI < 18.5 & BMI >= 16.5 ~ "Underweight", 
+                             BMI < 25 & BMI >= 18.5 ~ "Normal weight", 
+                             BMI < 30 & BMI >= 25 ~ "Overweight",
+                             BMI < 35 & BMI >= 35 ~ "Obesity class I",
+                             BMI < 40 & BMI >= 35 ~ "Obesity class II",
+                             BMI >= 40 ~ "Obesity class III"
+                             ))
+```
+
+## 3. Plotting breast cancer rates across BMI categories
+Create a bar chart showing the proportion of breast cancer cases and controls within each BMI category. (That is, the graph should clearly show, what % of each BMI category are cases and what % are controls)
+
+
+## 4. Logistic regression model of breast cancer
+4. Construct a logistic regression model using breast cancer classification as the outcome and glucose, HOMA-IR, leptin, BMI (continuous) and age as the independent variables.
+Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in HOMA-IR
+ 
+## 5. Linear regression model of breast cancer
+
+5.Construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
+Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in age.
+ 
+ 
