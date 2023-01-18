@@ -1,0 +1,21 @@
+---
+title: "P8451 HW 1"
+output: html_document
+date: "2023-01-18"
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+library(modelr)
+library(patchwork)
+
+knitr::opts_chunk$set(
+  warning = FALSE, 
+  message = FALSE,
+  fig.dim = c(12, 7))
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+## Part 1: 
