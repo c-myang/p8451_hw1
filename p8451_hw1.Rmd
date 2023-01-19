@@ -16,9 +16,6 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
-Assignment Instructions
-Using the study dataset, you will complete the following tasks. Create and then submit, using R markdown, a document that displays the programming code and output associated with each item. Follow the formatting instructions reviewed in class. You must provide a specific answer for all items; you are encouraged to output formatted and specific answers (e.g. only outputting a single estimate or generating a formatted table). Use complete sentences for any short-answer questions.
-
 ## 1. Descriptive statistics
 
 ### Reading in the data
@@ -28,24 +25,17 @@ First, let's read in the dataset.
 bc_data = read_csv("./bcdata_Assignment1.csv")
 ```
 
-Next, we will construct a table providing summaries of the mean, median, minimum value, and maximum value of each variable in the dataset.
+We can see that the `bc_data` table contains `r nrow(bc_data)` observations of `r ncol(bc_data)` variables.
 
 ### Summary table
+We will construct a table providing summaries of the mean, median, minimum value, and maximum value of each variable in the dataset.
+
 ```{r}
 summary(bc_data) %>% knitr::kable()
 ```
 
-
 ## 2. Recoding BMI
-We will recode BMI into the WHO-defined categories below:
-
-Severely underweight - BMI less than 16.5kg/m^2
-Underweight - BMI under 18.5 kg/m^2
-Normal weight - BMI greater than or equal to 18.5 to 24.9 kg/m^2
-Overweight – BMI greater than or equal to 25 to 29.9 kg/m^2
-Obesity class I – BMI 30 to 34.9 kg/m^2
-Obesity class II – BMI 35 to 39.9 kg/m^2
-Obesity class III – BMI greater than or equal to 40 kg/m^2
+The code chunk below creates a new variable, `BMI_cat`, which recodes BMI into 7 categories as defined by the WHO.
 
 ```{r}
 bc_data = bc_data %>% 
@@ -56,38 +46,37 @@ bc_data = bc_data %>%
                              BMI < 35 & BMI >= 30 ~ "Obesity class I",
                              BMI < 40 & BMI >= 35 ~ "Obesity class II",
                              BMI >= 40 ~ "Obesity class III"
-                             ))) %>% 
-  mutate(BMI_cat = fct_reorder(BMI_cat, BMI), 
-         Classification = as.factor(case_when(Classification == 1 ~ "Control",
-                                              Classification == 2 ~ "Case"))
-  ) %>% 
-  mutate(Classification = fct_relevel(Classification, "Case", "Control"))
+                             )))
 ```
 
 ## 3. Plotting breast cancer rates across BMI categories
-Create a bar chart showing the proportion of breast cancer cases and controls within each BMI category. (That is, the graph should clearly show, what % of each BMI category are cases and what % are controls)
+Next, we will create a bar chart showing the proportion of breast cancer cases and controls within each BMI category. For interpretability, we will format the `Classification` variable into a factor variable such that 1 = Control and 2 = Case.
 
-```{r}
+```{r plot}
+bc_data = bc_data %>% 
+  mutate(BMI_cat = fct_reorder(BMI_cat, BMI), 
+         Classification = as.factor(case_when(Classification == 1 ~ "Control",
+                                              Classification == 2 ~ "Case"))) %>% 
+  mutate(Classification = fct_relevel(Classification, "Control", "Case"))
+
 BC_BMI = bc_data %>% 
   group_by(BMI_cat, Classification) %>% 
   summarise(N = n()) %>% 
   mutate(Proportion = N/sum(N)) 
 
 BC_BMI %>% ggplot(aes(x = BMI_cat, y = Proportion, fill = Classification)) + 
-  geom_bar(position = position_stack(reverse = TRUE), stat = "identity") +
+  geom_bar(position = position_stack(reverse = F), stat = "identity") +
   labs(
     x = "BMI Category",
     y = "Proportion",
     title = "Proportion of breast cancer cases and controls by BMI category") +
-  scale_fill_brewer(palette = "RdYlGn")
+  scale_fill_brewer(palette = "PiG")
 ```
 
-
 ## 4. Logistic regression model of breast cancer
-4. Construct a logistic regression model using breast cancer classification as the outcome and glucose, HOMA-IR, leptin, BMI (continuous) and age as the independent variables.
-Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in HOMA-IR
+The code below constructs a logistic regression model using breast cancer classification as the outcome and glucose, HOMA-IR, leptin, BMI (continuous) and age as the independent variables.
 
-```{r}
+```{r logistic}
 fit_logistic = bc_data %>% 
   glm(Classification ~ Glucose + HOMA + Leptin + BMI + Age, data = ., family = binomial())
 
@@ -102,13 +91,12 @@ fit_logistic %>%
   knitr::kable(digits = 3)
 ```
 
+We can see that for a 1-unit change in HOMA-IR, the log odds of having breast cancer is expected to increase by 0.274 (95% CI: -0.063, 0.611). 
 
 ## 5. Linear regression model of breast cancer
+Next, we will construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
 
-5. Construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
-Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in age.
-
-```{r}
+```{r linear}
 fit_linear = bc_data %>% 
   lm(Insulin ~ BMI + Age + Glucose, data = .)
 
@@ -123,4 +111,4 @@ fit_linear %>%
   knitr::kable(digits = 3)
 ```
 
- 
+We can see that for a 1-year increase in age, the log odds of insulin increasing by 1 unit is expected to decrease by 0.054 (95% CI: -0.156, 0.048). 
