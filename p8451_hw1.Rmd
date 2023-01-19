@@ -1,7 +1,7 @@
 ---
 title: "P8451 Assignment 1"
 output: html_document
-date: "2023-01-18"
+date: "2023-01-24"
 ---
 
 ```{r setup, include = FALSE}
@@ -58,9 +58,10 @@ bc_data = bc_data %>%
                              BMI >= 40 ~ "Obesity class III"
                              ))) %>% 
   mutate(BMI_cat = fct_reorder(BMI_cat, BMI), 
-         Classification = as.factor(Classification))
-
-levels(bc_data$Classification)
+         Classification = as.factor(case_when(Classification == 1 ~ "Control",
+                                              Classification == 2 ~ "Case"))
+  ) %>% 
+  mutate(Classification = fct_relevel(Classification, "Case", "Control"))
 ```
 
 ## 3. Plotting breast cancer rates across BMI categories
@@ -73,21 +74,53 @@ BC_BMI = bc_data %>%
   mutate(Proportion = N/sum(N)) 
 
 BC_BMI %>% ggplot(aes(x = BMI_cat, y = Proportion, fill = Classification)) + 
-  geom_bar(position = "stack", stat = "identity") +
+  geom_bar(position = position_stack(reverse = TRUE), stat = "identity") +
   labs(
     x = "BMI Category",
-    y = "Proportion") + 
-  scale_fill_brewer()
+    y = "Proportion",
+    title = "Proportion of breast cancer cases and controls by BMI category") +
+  scale_fill_brewer(palette = "RdYlGn")
 ```
 
 
 ## 4. Logistic regression model of breast cancer
 4. Construct a logistic regression model using breast cancer classification as the outcome and glucose, HOMA-IR, leptin, BMI (continuous) and age as the independent variables.
 Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in HOMA-IR
- 
+
+```{r}
+fit_logistic = bc_data %>% 
+  glm(Classification ~ Glucose + HOMA + Leptin + BMI + Age, data = ., family = binomial())
+
+fit_logistic %>% 
+  broom::tidy() %>% 
+  filter(term == "HOMA") %>% 
+  mutate(CIL = estimate - 1.96*std.error,
+         CIU = estimate + 1.96*std.error) %>%
+  select(term, estimate, CIL, CIU) %>% 
+  rename("Term" = term,
+         "Beta estimate" = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
+
 ## 5. Linear regression model of breast cancer
 
 5. Construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
 Fill in the beta estimate and 95% confidence interval associated with a 1-unit change in age.
- 
+
+```{r}
+fit_linear = bc_data %>% 
+  lm(Insulin ~ BMI + Age + Glucose, data = .)
+
+fit_linear %>% 
+  broom::tidy() %>% 
+  filter(term == "Age") %>% 
+  mutate(CIL = estimate - 1.96*std.error,
+         CIU = estimate + 1.96*std.error) %>%
+  select(term, estimate, CIL, CIU) %>% 
+  rename("Term" = term,
+         "Beta estimate" = estimate) %>% 
+  knitr::kable(digits = 3)
+```
+
  
