@@ -91,7 +91,7 @@ fit_logistic %>%
   knitr::kable(digits = 3)
 ```
 
-We can see that for a 1-unit change in HOMA-IR, the log odds of having breast cancer is expected to increase by 0.274 (95% CI: -0.063, 0.611). 
+We can see that for a 1-unit increase in HOMA-IR, the log odds of having breast cancer is expected to increase by 0.274 (95% CI: -0.063, 0.611). 
 
 ## 5. Linear regression model of breast cancer
 Next, we will construct a linear regression model using insulin as the outcome and BMI (continuous), age, and glucose as the independent variables.
